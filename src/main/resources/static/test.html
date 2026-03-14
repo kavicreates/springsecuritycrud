@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Add Record</h2>
+<input id="sname" placeholder="Name">
+<input id="location" placeholder="Location">
+<button onclick="addRecord()">Submit</button>
+<p id="result"></p>
+
+<h2>Update Record</h2>
+<input id="updateId" placeholder="ID to update">
+<input id="updateName" placeholder="New name">
+<input id="updateLocation" placeholder="New location">
+<button onclick="updateRecord()">Update</button>
+<p id="updateResult"></p>
+
+<h2>Delete Record</h2>
+<input id="deleteId" placeholder="ID to delete">
+<button onclick="deleteRecord()">Delete</button>
+<p id="deleteResult"></p>
+
+<h2>View Records</h2>
+<button onclick="viewRecords()">View All</button>
+<pre id="viewResult"></pre>
+
+<script>
+    // CREATE
+    function addRecord() {
+      fetch("http://localhost:9090/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sname: document.getElementById("sname").value,
+          location: document.getElementById("location").value
+        })
+      })
+      .then(res => res.json())
+      .then(data => document.getElementById("result").innerText = "Saved: " + JSON.stringify(data))
+      .catch(err => document.getElementById("result").innerText = "Error: " + err);
+    }
+
+    // UPDATE
+    function updateRecord() {
+      const id = document.getElementById("updateId").value;
+      fetch("http://localhost:9090/update/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sname: document.getElementById("updateName").value,
+          location: document.getElementById("updateLocation").value
+        })
+      })
+      .then(res => res.json())
+      .then(data => document.getElementById("updateResult").innerText = "Updated: " + JSON.stringify(data))
+      .catch(err => document.getElementById("updateResult").innerText = "Error: " + err);
+    }
+
+    // DELETE
+    function deleteRecord() {
+      const id = document.getElementById("deleteId").value;
+      fetch("http://localhost:9090/delete/" + id, {
+        method: "DELETE"
+      })
+      .then(res => res.text())
+      .then(data => document.getElementById("deleteResult").innerText = data)
+      .catch(err => document.getElementById("deleteResult").innerText = "Error: " + err);
+    }
+
+    // VIEW
+    function viewRecords() {
+      fetch("http://localhost:9090/all", { method: "GET" })
+      .then(res => res.json())
+      .then(data => document.getElementById("viewResult").innerText = JSON.stringify(data, null, 2))
+      .catch(err => document.getElementById("viewResult").innerText = "Error: " + err);
+    }
+</script>
+</body>
+</html>
